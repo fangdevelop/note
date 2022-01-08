@@ -31,21 +31,23 @@ func VariablesAndConstants() {
 	fmt.Println("\n1 变量")
 	var v1 int
 	var v2 int = 2
-	var v3 = 3
+	var v3 = v2
 	v1 = 1
 	v4 := 4
 	var (
-		v5     = 5
+		v5     = v1
 		v6 int = 6
 		v7 int
 	)
-	fmt.Printf("v1=%v,v2=%v,v3=%v,v4=%v,v5=%v,v6=%v,v7=%v\n", v1, v2, v3, v4, v5, v6, v7)
+	var v8, v9 int = v2, v3
+	v10, v11 := v4, v5
+	fmt.Printf("v6=%v,v7=%v,v8=%v,v9=%v,v10=%v,v11=%v\n", v6, v7, v8, v9, v10, v11)
 	fmt.Println("\n2 常量")
 	const (
 		c1 = 8
 		c2 = iota //当前行数，注意：行数是从0开始计算
-		c3 = iota
-		c4 //默认值为上一行的值
+		c3 = iota //iota可以当做正常数字运算
+		c4        //默认值为上一行的值
 		c5 = 12
 		c6
 	)
@@ -55,16 +57,18 @@ func VariablesAndConstants() {
 //2.3 基本数据类型
 func BasicDataTypes() {
 	fmt.Println("\n2.3.1 整数型")
+	//int8, uint8, int16, uint16, int32, uint32, int64, uint64, int(默认), uint //int, uint为操作系统位数
 	var (
-		n1        = 0b0101
-		n2 int8   = 0o77
-		n3 uint16 = 0xAF
+		n1        = 0b0101 //0b/0B表示2进制
+		n2 int8   = 0o77   //0o/0O/0表示8进制
+		n3 uint16 = 0xAF   //0x/0X表示16进制
 	)
 	fmt.Printf("n1=%v,type is %T\n", n1, n1)
 	fmt.Printf("n2=%v,type is %T\n", n2, n2)
 	fmt.Printf("n3=%v,type is %T\n", n3, n3)
 
 	fmt.Println("\n2.3.2 浮点型")
+	//float32, float64(默认)
 	var (
 		f1         = 1.0
 		f2 float32 = 1
@@ -78,9 +82,9 @@ func BasicDataTypes() {
 
 	fmt.Println("\n2.3.5 字符型")
 	var (
-		c1 byte = 78
+		c1 byte = 78 //byte, uint8的别名, 通常表示一个ASCII码
 		c2      = '0'
-		c3 rune = 23454
+		c3 rune = 23454 //rune, int32的别名 通常表示一个UTF-8(ASCII的超集)码
 	)
 	fmt.Printf("c1的码值=%v,这个码值对应的字符是%c,type is %T\n", c1, c1, c1)
 	fmt.Printf("c2的码值=%v,这个码值对应的字符是%c,type is %T\n", c2, c2, c2)
@@ -91,11 +95,11 @@ func BasicDataTypes() {
 	fmt.Printf("c6的码值=%v,这个码值对应的字符是%c,type is %T\n", c6, c6, c6)
 
 	fmt.Println("\n2.3.6 布尔型")
-	var bool1 bool = true
+	var bool1 bool = true //bool
 	fmt.Printf("bool1=%v,type is %T\n", bool1, bool1)
 
 	fmt.Println("\n2.3.7 字符串")
-	var s1 = "hello"
+	var s1 = "hello" //string
 	fmt.Println(s1, "world")
 	fmt.Println(len(s1))
 	s2 := `	var (
@@ -112,6 +116,9 @@ func BasicDataTypes() {
 
 //2.4 指针
 func Pointer() {
+	// 取址符：&(获取当前变量的地址)
+	// 取值符：*(访问地址指向的值)
+	// 数据类型：*指向的类型
 	var increase = func(n *int) {
 		*n++ //n = n + 1
 		fmt.Printf("\nincrease结束时n=%v\nn的内存地址为%v\nn指向的值为%v\n", n, &n, *n)
@@ -121,46 +128,64 @@ func Pointer() {
 	fmt.Printf("\n调用increase(ptr)之后，src=%v\nsrc的内存地址为%v\n", src, &src)
 	var ptr = new(int)
 	fmt.Printf("\nptr=%v\nptr的内存地址为%v\nptr指向的值为%v\n", ptr, &ptr, *ptr)
+	//注意：引用类型的默认值为nil(空)，需要分配内存空间（引用已有值类型，或通过内建函数new()/make()来分配）
 }
 
 //2.5 fmt格式字符
 func FmtVerbs() {
 	fmt.Println("\n2.5.1 通用")
-	fmt.Printf("%%\n")
+	fmt.Printf("%%\n") //%%代表%
+	//%v代表value, 值
+	//%T代表Type, 数据类型
 
 	fmt.Println("\n2.5.2 整数")
 	i := 123
-	fmt.Printf("%U\n", i)
-	fmt.Printf("%c\n", i)
-	fmt.Printf("%q\n", i)
+	//%d代表decimal, 十进制
+	//%b代表binary, 二进制(没有前缀)
+	//%o代表octal, 八进制(没有前缀)
+	//%x代表hexadecimal, 十六进制a-f(没有前缀)
+	//%X代表hexadecimal, 十六进制A-F(没有前缀)
+	fmt.Printf("%U\n", i) //%U代表Unicode, U+四位16进制int32
+	fmt.Printf("%c\n", i) //%c代表character, Unicode码值所对应的字符
+	fmt.Printf("%q\n", i) //%q代表quoted, 带单引号的Unicode码值所对应的字符
 
 	fmt.Println("\n2.5.3 浮点数")
 	f := 123.456
-	fmt.Printf("%f\n", f)
-	fmt.Printf("%.2f\n", f)
-	fmt.Printf("%20f\n", f)
-	fmt.Printf("%b\n", f)
-	fmt.Printf("%E\n", f)
-	fmt.Printf("%X\n", f)
+	fmt.Printf("%f\n", f)   //%f或%F代表float, 小数
+	fmt.Printf("%.2f\n", f) //%.2f代表保留2位小数的%f(%.f为保留0位)
+	fmt.Printf("%20f\n", f) //%5f代表最小宽度为5的%f
+	//可以结合使用, 如%5.2f
+	fmt.Printf("%b\n", f) //%b表示指数为2的幂的无小数科学记数法
+	//%e表示使用小写e的科学计数法
+	fmt.Printf("%E\n", f) //%E表示使用大写E的科学计数法
+	//%g表示自动对宽度较大的数采用%e
+	//%G表示自动对宽度较大的数采用%E
+	fmt.Printf("%X\n", f) //%x表示hexadecimal, 0x十六进制科学计数法
+	//%X表示hexadecimal, 0X十六进制科学计数法
 
 	fmt.Println("\n2.5.4 布尔")
-	fmt.Printf("%t\n", f == 123.456)
+	fmt.Printf("%t\n", f == 123.456) //%t表示true or false, true或false的单词
 
 	fmt.Println("\n2.5.5 字符串或byte切片")
+	//%s表示string, 按字符串输出
 	s := "hello world"
-	fmt.Printf("%q\n", s)
-	fmt.Printf("%x\n", s)
+	fmt.Printf("%q\n", s) //%q表示quoted, 带双引号的按字符串输出
+	fmt.Printf("%x\n", s) //%x表示hexadecimal, 每个byte按两位小写十六进制码值输出
+	//%X表示hexadecimal, 每个byte按两位大写十六进制码值输出
 
 	fmt.Println("\n2.5.6 指针")
 	p := &s
-	fmt.Printf("%p\n", p)
+	fmt.Printf("%p\n", p) //%p表示pointer, 0x开头的16进制地址
+	//所有适用于整数的格式字符也适用于指针
 }
 
 //2.6 运算符
 func Operator() {
 	fmt.Println("\n2.6.1 算数运算符")
+	//+，-，*，/，%
 	fmt.Printf("8%%3=%d\n", 8%3)
 	i := 123
+	//++， --
 	i++ //i=i+1
 	fmt.Printf("i=%d\n", i)
 
@@ -170,23 +195,26 @@ func Operator() {
 	fmt.Printf("b<<2=%b\n", b<<2)
 	var b1 uint8 = 0b00111100
 	var b2 uint8 = 0b11001111
-	fmt.Printf("b1&b2=%b\n", b1&b2)
-	fmt.Printf("b1|b2=%b\n", b1|b2)
-	fmt.Printf("b1^b2=%b\n", b1^b2)
+	fmt.Printf("b1&b2=%b\n", b1&b2) //按位与,都为1则为1
+	fmt.Printf("b1|b2=%b\n", b1|b2) //按位或,一个为1则为1
+	fmt.Printf("b1^b2=%b\n", b1^b2) //按位异或, 不同则为1
 
 	fmt.Println("\n2.6.3 赋值运算符")
+	//=，+=，-=，*=，/=，%=，>>=，<<=，&=，|=，^=
 	b += 3 //b=b+3
 	fmt.Printf("b=%d\n", b)
 
 	fmt.Println("\n2.6.4 关系运算符")
+	//>，>=，<，<=，==，!=
 	fmt.Printf("b1==b2?%t\n", b1 == b2)
 
 	fmt.Println("\n2.6.5 逻辑运算符")
+	//&&，||，!
 	bool1 := true
 	bool2 := false
-	fmt.Printf("bool1&&bool2?%t\n", bool1 && bool2)
-	fmt.Printf("bool1||bool2?%t\n", bool1 || bool2)
-	fmt.Printf("!bool2?%t\n", !bool2)
+	fmt.Printf("bool1&&bool2?%t\n", bool1 && bool2) //与
+	fmt.Printf("bool1||bool2?%t\n", bool1 || bool2) //或
+	fmt.Printf("!bool2?%t\n", !bool2)               //非
 }
 
 //3.1 if…else
@@ -216,18 +244,20 @@ func SwitchCase() {
 	fmt.Println("请输入星期（数字）")
 	fmt.Scanln(&weekday)
 	switch weekday {
-	case 1:
+	case 1: //case结尾会自动break，如果需要继续匹配下一项可以加入fallthrough
 		fmt.Println("酱油炒饭")
-
 	case 2:
 		fmt.Println("酱油炒面")
-	default:
+	default: //default可以省略
 		fmt.Println("输入有误")
 	}
 }
 
 //3.3 for循环
 func For() {
+	//break//结束
+	//continue//结束本次继续下一次
+
 	fmt.Println("\n3.3.1 无限循环")
 	i := 1
 	for {
@@ -293,7 +323,7 @@ func Function() {
 //3.6 defer
 func deferUtil() func(int) int {
 	i := 0
-	return func(n int) int {
+	return func(n int) int { //n是形参：形式参数，定义函数时使用的参数
 		fmt.Printf("本次调用接收到n=%v\n", n)
 		i++
 		fmt.Printf("匿名工具函数被第%v次调用\n", i)
@@ -302,7 +332,7 @@ func deferUtil() func(int) int {
 }
 func Defer() int {
 	f := deferUtil()
-	defer f(1)
+	defer f(1) //1是实参：调用时传递给函数的实际参数
 	defer f(2)
 	defer f(3)
 	return f(4)
@@ -321,7 +351,7 @@ func DeferRecover() {
 //4.1 数组
 func Array() {
 	//4.1.1 声明
-	var a = [...]int{
+	var a [3]int = [...]int{ //长度是数组类型的一部分, 长度不能留空, 留空是切片类型//等号右侧的长度可以简写为[…]自动判断
 		1,
 		456,
 		789,
@@ -351,6 +381,8 @@ func Array() {
 
 //4.2 切片
 func Slice() {
+	//切片是对数组的引用
+	//切片本身并不存储任何数据，它只是描述了底层数组中的一段
 	array := [5]int{1, 2, 3, 4, 5}
 	var s1 []int = array[1:4] //[开始引用的index:结束引用的index+1)//[0:len(array)]等效于[:]
 	s1[0] = 0
@@ -478,10 +510,10 @@ func (u User) printName() {
 	fmt.Println("u.Name=", u.Name)
 }
 func (u *User) setId() {
-	(*u).Id = 10000
+	(*u).Id = 10000 //注意“.”优先级高于“&”/“*”, 使用时可以简写(隐式间接引用)
 }
 func Method() {
-	u := User{
+	u := &User{ //可以使用“&”前缀快速声明结构体指针
 		Name: "小方块",
 	}
 	u.printName()
