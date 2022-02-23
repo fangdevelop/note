@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	note.BinarySearchTest()
+	note.RedisHashToStruct()
 }
